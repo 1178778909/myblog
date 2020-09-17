@@ -2,6 +2,7 @@ import datetime
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.db.models import Sum
+from blog.models import Blog
 from .models import ReadNum, ReadDetail
 
 
@@ -33,3 +34,23 @@ def get_seven_days_read_data(content_type):
         result = read_details.aggregate(read_num_sum=Sum('read_num'))
         read_nums.append(result['read_num_sum'] or 0)
     return dates, read_nums
+
+def get_today_hot_data(content_type):
+    today = timezone.now().date()
+    read_details = ReadDetail.objects.filter(content_type=content_type, date=today).order_by('-read_num')
+    return read_details[:7]
+
+def get_yesterday_hot_data(content_type):
+    yesterday = timezone.now().date() - datetime.timedelta(days=1)
+    read_details = ReadDetail.objects.filter(content_type=content_type, date=yesterday).order_by('-read_num')
+    return read_details[:7]
+
+def get_7days_hot_data():
+    today = timezone.now().date()
+    dates = today - datetime.timedelta(days=7)
+    blogs = Blog.objects\
+                .filter(read_details__date__lt=today, read_details__date__gte=date)\
+                .values('id', 'title')\
+                .annotate(read_num_sum=Sum('read_details__read_sum'))\
+                .order_by('-read_num_sum')
+    return blogs[:7]
