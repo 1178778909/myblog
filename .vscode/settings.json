@@ -1,0 +1,6 @@
+{
+    "python.pythonPath": "H:\\anaconda\\envs\\mysite_env\\python.exe",
+    "python.linting.pylintArgs": [
+        "--load-plugins",
+    ]
+}
