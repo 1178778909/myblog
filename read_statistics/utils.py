@@ -44,13 +44,22 @@ def get_yesterday_hot_data(content_type):
     yesterday = timezone.now().date() - datetime.timedelta(days=1)
     read_details = ReadDetail.objects.filter(content_type=content_type, date=yesterday).order_by('-read_num')
     return read_details[:7]
-
+'''
 def get_7days_hot_data():
     today = timezone.now().date()
     dates = today - datetime.timedelta(days=7)
     blogs = Blog.objects\
                 .filter(read_details__date__lt=today, read_details__date__gte=date)\
                 .values('id', 'title')\
-                .annotate(read_num_sum=Sum('read_details__read_sum'))\
+                .annotate(read_num_sum=Sum('read_details__read_num'))\
                 .order_by('-read_num_sum')
     return blogs[:7]
+'''
+def get_7days_hot_data(content_type):
+    today = timezone.now().date()
+    date = today - datetime.timedelta(days=7)
+    read_details = ReadDetail.objects.filter(content_type=content_type, date__lt=today, date__gte=date).values('content_type', 'object_id').annotate(read_num_sum=Sum('read_num')).order_by('-read_num_sum')
+    read_details_then = {}
+    for i in read_details:
+        read_details_then[Blog.objects.get(pk=i['object_id'])] = i['read_num_sum']
+    return read_details_then
