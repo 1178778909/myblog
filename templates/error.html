@@ -8,5 +8,12 @@
 {% block nav_home_active %}active{% endblock %}
 
 {% block content %}
-	{{ msessage }}, <a href="{{ redirect_to }}">返回</a>
+	<form action="{% url 'login' %}" method="POST">
+		{% csrf_token %}
+		<span>用户名：</span>
+		<input type="text" name="username">
+		<span>密码：</span>
+		<input type="text" name="password">
+		<input type="submit" value="登录">
+	</form>
 {% endblock %}
