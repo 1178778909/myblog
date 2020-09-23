@@ -25,8 +25,10 @@ urlpatterns = [
     path('ckeditor', include('ckeditor_uploader.urls')),
     path('blog/', include('blog.urls')),
 	path('login/', views.login, name='login'),
+    path('login_for_modal/', views.login_for_modal, name='login_for_modal'),
     path('comment/', include('comment.urls')),
     path('register/', views.register, name='register'),
+    path('likes/', include('likes.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
