@@ -1,14 +1,10 @@
 from django.shortcuts import render, redirect
 from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
-from django.contrib import auth
-from django.contrib.auth.models import User
 from django.urls import reverse
-from django.http import JsonResponse
 
 from read_statistics import utils
 from blog.models import Blog
-from .forms import LoginForm, RegForm
 
 def home(request):
     blog_content_type = ContentType.objects.get_for_model(Blog)
@@ -34,7 +30,7 @@ def login(request):
         if login_form.is_valid():
             user = login_form.cleaned_data['user']
             auth.login(request, user)
-            return redirect(request.GET.get('from'), reverse('home'))                  
+            return redirect(request.GET.get('from', reverse('home')))                  
     else:
         login_form = LoginForm()
 
@@ -74,4 +70,10 @@ def register(request):
     context['reg_form'] = reg_form
     return render(request, 'register.html', context)
 
-    
+def logout(request):
+    auth.logout(request)
+    return redirect(request.GET.get('from', reverse('home')))
+
+def user_info(request):
+    context = {}
+    return render(request, 'user_info.html', context)

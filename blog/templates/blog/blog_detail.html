@@ -55,7 +55,7 @@
 					<h3 class='comment-area-title'>提交评论</h3>
 					{% if user.is_authenticated %}					
 						<form id="comment_form" action="{% url 'update_comment' %}" method="POST" style="overflow: hidden;">
-							<label>{{user.username}}&nbsp;欢迎:</label>
+							<label>{{ user.get_nickname_or_username }}&nbsp;欢迎:</label>
 							<div id="reply_content_container" style="display: none;">
 								<p id="reply_title">回复: </p>
 								<div id="reply_content"></div>
@@ -81,7 +81,7 @@
 						{% get_comment_list blog as comments %}
 						{% for comment in comments %}
 							<div id="root_{{ comment.pk }}" class="comment">
-								<span>{{ comment.user.username }}</span>
+								<span>{{ comment.user.get_nickname_or_username }}</span>
 								<span>({{ comment.comment_time|date:"Y-m-d H:i:s" }}):</span>
 								<div id="comment_{{ comment.pk }}">
 									{{ comment.text|safe }}	
@@ -94,9 +94,9 @@
 																						
 								{% for reply in comment.root_comment.all %}									
 									<div class="reply">
-										<span>{{ reply.user.username }}</span>
+										<span>{{ reply.user.get_nickname_or_username }}</span>
 										<span>({{ reply.comment_time|date:"Y-m-d H:i:s" }})</span>
-										<span>回复</span>&nbsp;{{ reply.reply_to.username }}:
+										<span>回复</span>&nbsp;{{ reply.reply_to.get_nickname_or_username }}:
 										<div id="comment_{{ reply.pk }}">
 											{{ reply.text|safe }}	
 										</div>
@@ -114,34 +114,7 @@
 					</div>					
 				</div>				
 			</div>
-		</div>
-		<!-- Modal -->
-		<div class="modal fade" id="login_modal" tabindex="-1" role="dialog">
-			<div class="modal-dialog modal-sm" role="document">
-				<div class="modal-content">
-					<form id="login_medal_form" action="" method="POST">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							<h4 class="modal-title">登录</h4>
-						</div>
-
-						<div class="modal-body">
-							{% csrf_token %}
-							{% for field in login_form %}
-								<label for="{{ field.id_for_label }}">{{ field.label }}</label>
-								{{ field }}
-							{% endfor %}
-							<span id="login_medal_tip" class="text-danger"></span>
-						</div>
-
-						<div class="modal-footer">
-							<button type="submit" class="btn btn-primary">登录</button>
-							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>                        
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
+		</div>		
 	</div>    
 {% endblock %}
 
@@ -282,26 +255,7 @@
 				}
 			})
 		}
-		$("#login_medal_form").submit(function(event){
-			event.preventDefault();
-			$.ajax({
-				url: '{% url "login_for_modal" %}',
-				type: 'POST',
-				data: $(this).serialize(),
-				cache: false,
-				success: function(data){
-					console.log(data)
-					if(data['status']=='SUCCESS'){
-						window.location.reload();
-					}else{
-						$("#login_medal_tip").text('用户名或密码不正确')
-					}
-				},
-				error: function(xhr){
-					console.log(xhr)
-				},
-			});
-		});
+		
 	</script>
 {% endblock %}
     
