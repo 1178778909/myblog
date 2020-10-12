@@ -1,2 +1,4 @@
 mysite/settings/development.py
-*.__pycache__
+.__pycache__/
+db.sqlite3
+static_collected/
